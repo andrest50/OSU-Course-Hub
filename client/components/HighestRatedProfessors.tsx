@@ -44,7 +44,9 @@ const ProfessorQuality: React.FC<Props> = ({ id }) => {
 	return (
 		<Card.Text style={item}>
 			Quality:
-			<span style={variable}>{Math.round(qualities.reduce((a, b) => a + b, 0) / qualities.length * 100) / 100}</span>
+			<span style={variable}>
+				{Math.round((qualities.reduce((a, b) => a + b, 0) / qualities.length) * 100) / 100}
+			</span>
 			<span style={constant}>/5</span>
 		</Card.Text>
 	);

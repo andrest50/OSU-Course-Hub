@@ -28,8 +28,9 @@ interface Props {
 }
 
 const Info: React.FC<Props> = ({ course, professor, comments }) => {
-	let qualities: number[] = [], difficulties: number[] = [];
-	if(comments){
+	let qualities: number[] = [],
+		difficulties: number[] = [];
+	if (comments) {
 		qualities = comments.map(comment => comment.quality);
 		difficulties = comments.map(comment => comment.difficulty);
 	}
@@ -53,7 +54,9 @@ const Info: React.FC<Props> = ({ course, professor, comments }) => {
 					Difficulty:
 					<span style={variable}>
 						{difficulties.length
-							? (difficulties.reduce((a, b) => a + b, 0) / difficulties.length).toFixed(1)
+							? (
+									difficulties.reduce((a, b) => a + b, 0) / difficulties.length
+							  ).toFixed(1)
 							: 0}
 					</span>
 					<span style={constant}>/5</span>

@@ -101,7 +101,7 @@ export class CommentResolver {
             tags,
         }: CommentInput
     ): Promise<Comment> {
-        const student = await Student.findOne({ ONID });
+        const student = await Student.findOne({ where: { ONID } });
         const validationErrors: any = {};
         if (!student) {
             validationErrors.student = `Could not find student with given ONID: ${ONID}`;
@@ -120,7 +120,7 @@ export class CommentResolver {
             }
         }
         if (professorID) {
-            const professor = await Professor.find({ id: professorID });
+            const professor = await Professor.find({ where: { id: professorID } });
             if (professor) {
                 const comment = await Comment.create({
                     anonymous,
@@ -141,7 +141,7 @@ export class CommentResolver {
             }
             validationErrors.professor = `Could not find professor with given ID: ${professorID}`;
         }
-        const course = await Course.find({ id: courseID });
+        const course = await Course.find({ where: { id: courseID } });
         if (course) {
             const comment = await Comment.create({
                 anonymous,
@@ -166,7 +166,7 @@ export class CommentResolver {
 
     @Mutation(() => Boolean)
     async deleteComment(@Arg('commentID') id: number): Promise<boolean> {
-        const comment = await Comment.find({ id });
+        const comment = await Comment.find({ where: { id } });
         if (comment) {
             await Comment.delete({ id });
             return true;

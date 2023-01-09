@@ -4,6 +4,7 @@ import { Arg, Field, ID, InputType, Int, Mutation, Query, Resolver } from 'type-
 import { Course } from '../entity/Course';
 import { CourseTextbook } from '../entity/CourseTextbook';
 import { Textbook } from '../entity/Textbook';
+import { In } from 'typeorm';
 import { Terms } from '../util';
 
 @InputType()
@@ -39,9 +40,9 @@ class TextbookInput {
 export class TextbookResolver {
     @Query(() => [Textbook])
     async courseTextbooks(@Arg('courseID') id: number): Promise<Textbook[]> {
-        const textbooks = await CourseTextbook.find({ courseID: id });
+        const textbooks = await CourseTextbook.find({ where: { courseID: id } });
         const textbookISBNs = textbooks.map(textbook => textbook.ISBN);
-        return Textbook.findByIds(textbookISBNs);
+        return Textbook.find({ where: { ISBN: In(textbookISBNs) } });
     }
 
     @Mutation(() => Textbook)
@@ -58,11 +59,13 @@ export class TextbookResolver {
         if (yearUsed.toString().length !== 4) {
             validationErrors.year = `Invalid Year: ${yearUsed}`;
         }
-        const duplicateTextbook = await CourseTextbook.findOne({ courseID, ISBN: input.ISBN });
+        const duplicateTextbook = await CourseTextbook.findOne({
+            where: { courseID, ISBN: input.ISBN },
+        });
         if (duplicateTextbook) {
             validationErrors.textbook = `Textbook with ISBN: ${input.ISBN} for course with ID: ${courseID} already exists`;
         }
-        const course = await Course.findOne({ id: courseID });
+        const course = await Course.findOne({ where: { id: courseID } });
         if (!course) {
             validationErrors.course = `Could not find course with given ID: ${courseID}`;
         }
@@ -71,9 +74,9 @@ export class TextbookResolver {
                 validationErrors,
             });
         }
-        let textbook = await Textbook.findOne({ ISBN: input.ISBN });
+        let textbook = await Textbook.findOne({ where: { ISBN: input.ISBN } });
         if (!textbook) {
-            textbook = await Textbook.create(input).save();
+            textbook = await Textbook.create(Textbook).save();
         }
         await CourseTextbook.create({
             courseID,

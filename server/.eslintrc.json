@@ -1,12 +1,13 @@
 {
     "env": {
-        "browser": true,
-        "commonjs": true,
+        "browser": false,
+        "commonjs": false,
         "es2020": true
     },
     "extends": [
         "airbnb-base",
         "prettier",
+        "eslint:recommended",
         "plugin:node/recommended",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",

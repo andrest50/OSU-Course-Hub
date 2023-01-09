@@ -12,7 +12,7 @@ interface Props {
 	addOneComment: (comment: CommentType) => void;
 }
 
-const AddComment: React.FC<Props> = ({show, setShow, addOneComment}) => {
+const AddComment: React.FC<Props> = ({ show, setShow, addOneComment }) => {
 	const [values, setValues] = useState({
 		anonymous: false,
 		text: '',
@@ -31,23 +31,34 @@ const AddComment: React.FC<Props> = ({show, setShow, addOneComment}) => {
 		e.preventDefault();
 		const studentID = window.sessionStorage.getItem('request-onid');
 		let comment: CommentType;
-		if(Router.pathname === "/course/[id]"){
-			createComment({ variables: { ...values, ONID: studentID, courseID: parseInt(Router.query.id as string) } })
-			.then((data) => {
-				comment = data.data.createComment
-				addOneComment(comment)
+		if (Router.pathname === '/course/[id]') {
+			createComment({
+				variables: {
+					...values,
+					ONID: studentID,
+					courseID: parseInt(Router.query.id as string),
+				},
 			})
-			.catch((error) => console.log(error))
-		}
-		else if(Router.pathname === "/professor/[id]"){
-			createComment({ variables: { ...values, ONID: studentID, professorID: parseInt(Router.query.id as string) } })
-			.then((data) => {
-				comment = data.data.createComment
-				addOneComment(comment)
+				.then(data => {
+					comment = data.data.createComment;
+					addOneComment(comment);
+				})
+				.catch(error => console.log(error));
+		} else if (Router.pathname === '/professor/[id]') {
+			createComment({
+				variables: {
+					...values,
+					ONID: studentID,
+					professorID: parseInt(Router.query.id as string),
+				},
 			})
-			.catch((error) => console.log(error))
+				.then(data => {
+					comment = data.data.createComment;
+					addOneComment(comment);
+				})
+				.catch(error => console.log(error));
 		}
-		
+
 		setValues({
 			anonymous: false,
 			text: '',
@@ -58,7 +69,7 @@ const AddComment: React.FC<Props> = ({show, setShow, addOneComment}) => {
 			baccCore: true,
 			gradeReceived: 'N/A',
 			tags: [],
-		})
+		});
 		setShow(false);
 	};
 
@@ -78,7 +89,7 @@ const AddComment: React.FC<Props> = ({show, setShow, addOneComment}) => {
 		const idx = values.tags.indexOf(e.target.name as never);
 
 		if (idx === -1) {
-			setValues({ ...values, tags: [...values.tags as never, e.target.name as never] });
+			setValues({ ...values, tags: [...(values.tags as never), e.target.name as never] });
 		} else {
 			const newTags = values.tags;
 			newTags.splice(idx);
@@ -87,7 +98,7 @@ const AddComment: React.FC<Props> = ({show, setShow, addOneComment}) => {
 	};
 
 	const handleAnonymous = () => {
-		if(values.anonymous === true){
+		if (values.anonymous === true) {
 			setValues({ ...values, anonymous: false });
 		} else {
 			setValues({ ...values, anonymous: true });

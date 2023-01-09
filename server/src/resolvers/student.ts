@@ -12,7 +12,7 @@ export class StudentResolver {
 
     @Query(() => Student)
     async student(@Arg('ONID') ONID: string): Promise<Student> {
-        const student = await Student.findOne({ ONID });
+        const student = await Student.findOne({ where: { ONID } });
         if (student) {
             return student;
         }
@@ -23,7 +23,7 @@ export class StudentResolver {
 
     @Mutation(() => Student)
     async createStudent(@Arg('ONID') ONID: string): Promise<Student> {
-        const duplicateStudent = await Student.findOne({ ONID });
+        const duplicateStudent = await Student.findOne({ where: { ONID } });
         if (duplicateStudent) {
             throw new UserInputError('Validation error(s)', {
                 validationErrors: { course: `Student with ONID: ${ONID} already exists` },
@@ -42,8 +42,8 @@ export class StudentResolver {
         @Arg('ONID') ONID: string,
         @Arg('commentID') commentID: number
     ): Promise<Comment> {
-        const student = await Student.findOne({ ONID });
-        const comment = await Comment.findOne({ id: commentID });
+        const student = await Student.findOne({ where: { ONID } });
+        const comment = await Comment.findOne({ where: { id: commentID } });
         if (student) {
             if (comment) {
                 const idx1 = student.likedCommentIDs.indexOf(commentID);
@@ -79,8 +79,8 @@ export class StudentResolver {
         @Arg('ONID') ONID: string,
         @Arg('commentID') commentID: number
     ): Promise<Comment> {
-        const student = await Student.findOne({ ONID });
-        const comment = await Comment.findOne({ id: commentID });
+        const student = await Student.findOne({ where: { ONID } });
+        const comment = await Comment.findOne({ where: { id: commentID } });
         if (student) {
             if (comment) {
                 const idx1 = student.dislikedCommentIDs.indexOf(commentID);
@@ -115,7 +115,7 @@ export class StudentResolver {
 
     @Mutation(() => Boolean)
     async deleteStudent(@Arg('ONID') ONID: string): Promise<boolean> {
-        const student = await Student.findOne({ ONID });
+        const student = await Student.findOne({ where: { ONID } });
         if (student) {
             await Student.delete({ ONID });
             return true;

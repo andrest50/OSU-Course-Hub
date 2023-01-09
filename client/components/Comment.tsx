@@ -1,7 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Row, Spinner } from 'react-bootstrap';
-import { DISLIKE_COMMENT, LIKE_COMMENT, DELETE_COMMENT, STUDENT, COURSE, PROFESSOR } from 'utils/graphql';
+import {
+	DISLIKE_COMMENT,
+	LIKE_COMMENT,
+	DELETE_COMMENT,
+	STUDENT,
+	COURSE,
+	PROFESSOR,
+} from 'utils/graphql';
 import { CommentType, StudentType } from '../utils/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -19,12 +26,15 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 		skip: !studentID,
 	});
 
-	const { loading: prof_course_loading, data: prof_course_data } = useQuery(comment.courseID ? COURSE : PROFESSOR, {
-		variables: {
-			...(comment.courseID && { courseID: comment.courseID }),
-			...(comment.professorID && { professorID: comment.professorID }),
-		},
-	});
+	const { loading: prof_course_loading, data: prof_course_data } = useQuery(
+		comment.courseID ? COURSE : PROFESSOR,
+		{
+			variables: {
+				...(comment.courseID && { courseID: comment.courseID }),
+				...(comment.professorID && { professorID: comment.professorID }),
+			},
+		}
+	);
 
 	const [initLikeOrDislike, setInitLikeOrDislike] = useState(0);
 	const [likeOrDislike, setLikeOrDislike] = useState(0);
@@ -34,13 +44,13 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 	useEffect(() => {
 		if (data) {
 			if (data.student.likedCommentIDs.indexOf(parseInt(comment.id)) !== -1) {
-				setInitLikeOrDislike(1)
+				setInitLikeOrDislike(1);
 				setLikeOrDislike(1);
 			} else if (data.student.dislikedCommentIDs.indexOf(parseInt(comment.id)) !== -1) {
-				setInitLikeOrDislike(-1)
+				setInitLikeOrDislike(-1);
 				setLikeOrDislike(-1);
 			} else {
-				setInitLikeOrDislike(0)
+				setInitLikeOrDislike(0);
 				setLikeOrDislike(0);
 			}
 		}
@@ -53,23 +63,32 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 	return (
 		<Card className='shadow mt-5 mb-4 p-4 w-75'>
 			<Row className='pl-3 pr-4'>
-				{(Router.pathname !== "/student/[id]") ? 
-				<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
-					{comment.anonymous ? 'Anonymous' : comment.ONID}
-				</Card.Title> : ((comment.professorID) ? 
-				<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
-					{prof_course_data.professor.firstName} {prof_course_data.professor.lastName}
-				</Card.Title> : 
-				<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
-					{prof_course_data.course.department} {prof_course_data.course.number}
-				</Card.Title>)}
+				{Router.pathname !== '/student/[id]' ? (
+					<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
+						{comment.anonymous ? 'Anonymous' : comment.ONID}
+					</Card.Title>
+				) : comment.professorID ? (
+					<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
+						{prof_course_data.professor.firstName} {prof_course_data.professor.lastName}
+					</Card.Title>
+				) : (
+					<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
+						{prof_course_data.course.department} {prof_course_data.course.number}
+					</Card.Title>
+				)}
 				<Card.Text className='text-right ml-auto text-muted'>
 					<strong>Created At</strong> {new Date(comment.createdAt).toDateString()}
 				</Card.Text>
-				{studentID === comment.ONID ? <FontAwesomeIcon icon={faTrash} className="delete-icon" onClick={() => {
-					deleteComment({variables: {commentID: parseInt(comment.id)}})
-					deleteOneComment(parseInt(comment.id))
-				}} /> : null}
+				{studentID === comment.ONID ? (
+					<FontAwesomeIcon
+						icon={faTrash}
+						className='delete-icon'
+						onClick={() => {
+							deleteComment({ variables: { commentID: parseInt(comment.id) } });
+							deleteOneComment(parseInt(comment.id));
+						}}
+					/>
+				) : null}
 			</Row>
 			<Card.Text className='mt-2 text-left' style={{ whiteSpace: 'pre-wrap' }}>
 				<strong>Campus: </strong>
@@ -98,39 +117,49 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 			</div>
 			<Card.Text className='mt-3'>Text: {comment.text}</Card.Text>
 			<Card.Text>
-				Likes: {comment.likes + (initLikeOrDislike === 1 ? -1 : 0) + (likeOrDislike === 1 ? 1 : 0)} Dislikes:{' '}
-				{comment.dislikes + (initLikeOrDislike === -1 ? -1 : 0) + (likeOrDislike === -1 ? 1 : 0)}
+				Likes:{' '}
+				{comment.likes + (initLikeOrDislike === 1 ? -1 : 0) + (likeOrDislike === 1 ? 1 : 0)}{' '}
+				Dislikes:{' '}
+				{comment.dislikes +
+					(initLikeOrDislike === -1 ? -1 : 0) +
+					(likeOrDislike === -1 ? 1 : 0)}
 			</Card.Text>
 			{studentID && (
 				<Row className='pl-3'>
-					{(comment.ONID === studentID) ?
-					null :
+					{comment.ONID === studentID ? null : (
 						<div>
-						<Button
-						className='mr-3'
-						variant={likeOrDislike === 1 ? 'primary' : 'outline-primary'}
-						onClick={() => {
-							addLike({
-								variables: { ONID: studentID, commentID: parseInt(comment.id) },
-							});
-							setLikeOrDislike(likeOrDislike === 1 ? 0 : 1);
-						}}
-						>
-							Like
-						</Button>
-						<Button
-						className='mr-3'
-						variant={likeOrDislike === -1 ? 'primary' : 'outline-primary'}
-						onClick={() => {
-							addDislike({
-								variables: { ONID: studentID, commentID: parseInt(comment.id) },
-							});
-							setLikeOrDislike(likeOrDislike === -1 ? 0 : -1);
-						}}
-						>
-							Dislike
-						</Button></div>			
-					}
+							<Button
+								className='mr-3'
+								variant={likeOrDislike === 1 ? 'primary' : 'outline-primary'}
+								onClick={() => {
+									addLike({
+										variables: {
+											ONID: studentID,
+											commentID: parseInt(comment.id),
+										},
+									});
+									setLikeOrDislike(likeOrDislike === 1 ? 0 : 1);
+								}}
+							>
+								Like
+							</Button>
+							<Button
+								className='mr-3'
+								variant={likeOrDislike === -1 ? 'primary' : 'outline-primary'}
+								onClick={() => {
+									addDislike({
+										variables: {
+											ONID: studentID,
+											commentID: parseInt(comment.id),
+										},
+									});
+									setLikeOrDislike(likeOrDislike === -1 ? 0 : -1);
+								}}
+							>
+								Dislike
+							</Button>
+						</div>
+					)}
 				</Row>
 			)}
 		</Card>

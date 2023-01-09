@@ -15,10 +15,7 @@ const StudentInfo: React.FC<Props> = props => {
 		<Card className='mt-5 mb-4 p-4 w-75'>
 			<h3>ONID: {student.ONID}</h3>
 			<h5>Comments: {comments.length}</h5>
-			<h5>
-				Liked comments:{' '}
-				{student.likedCommentIDs ? student.likedCommentIDs.length : 0}
-			</h5>
+			<h5>Liked comments: {student.likedCommentIDs ? student.likedCommentIDs.length : 0}</h5>
 			<h5>
 				Disliked comments:{' '}
 				{student.dislikedCommentIDs ? student.dislikedCommentIDs.length : 0}

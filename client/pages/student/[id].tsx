@@ -4,7 +4,7 @@ import Error from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Container } from 'react-bootstrap';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import StudentInfo from '../../components/StudentInfo';
 import { STUDENT, STUDENT_COMMENTS } from '../../utils/graphql';
@@ -15,7 +15,7 @@ const StudentPage = () => {
 	const router = useRouter();
 	const { loading, data } = useQuery<StudentType>(STUDENT, {
 		variables: {
-			ONID: router.query.id
+			ONID: router.query.id,
 			/*ONID: /^\d+$/.test(router.query.id as string)
 				? parseInt(router.query.id as string)
 				: null,*/
@@ -23,21 +23,24 @@ const StudentPage = () => {
 		skip: !router.query.id,
 	});
 
-	const { loading: loading_comments, data: data_comments } = useQuery<CommentData>(STUDENT_COMMENTS, {
-		variables: { ONID: router.query.id },
-	});
+	const { loading: loading_comments, data: data_comments } = useQuery<CommentData>(
+		STUDENT_COMMENTS,
+		{
+			variables: { ONID: router.query.id },
+		}
+	);
 
-	const [student, setStudent] = useState<any>()
-	const [comments, setComments] = useState<any>([])
+	const [student, setStudent] = useState<any>();
+	const [comments, setComments] = useState<any>([]);
 
 	useEffect(() => {
-		if(data){
-			setStudent(data.student)
+		if (data) {
+			setStudent(data.student);
 		}
-		if(data_comments){
-			setComments(data_comments.comments)
+		if (data_comments) {
+			setComments(data_comments.comments);
 		}
-	}, [data, data_comments])
+	}, [data, data_comments]);
 
 	if (loading || loading_comments || !router.query.id) {
 		return <></>;
@@ -46,8 +49,8 @@ const StudentPage = () => {
 	}
 
 	const deleteOneComment = (commentID: number) => {
-		setComments(comments.filter((comment) => commentID != parseInt(comment['id'])))
-	}
+		setComments(comments.filter(comment => commentID != parseInt(comment['id'])));
+	};
 
 	return (
 		<>
@@ -58,7 +61,16 @@ const StudentPage = () => {
 			<Header searchbarToggled={true} />
 			<Container>
 				<StudentInfo student={student} comments={comments} />
-				{comments.slice().reverse().map(comment => <Comment key={comment.id} comment={comment} deleteOneComment={deleteOneComment} />)}
+				{comments
+					.slice()
+					.reverse()
+					.map(comment => (
+						<Comment
+							key={comment.id}
+							comment={comment}
+							deleteOneComment={deleteOneComment}
+						/>
+					))}
 			</Container>
 		</>
 	);

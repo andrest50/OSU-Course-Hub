@@ -40,9 +40,8 @@ const Searchbar: React.FC<Props> = props => {
 	const router = useRouter();
 	const [menu, openMenu] = useState(false);
 	const [inputValue, setInputValue] = useState('');
-	const { loading: loadingProfessors, data: professorsData } = useQuery<ProfessorData>(
-		PROFESSORS
-	);
+	const { loading: loadingProfessors, data: professorsData } =
+		useQuery<ProfessorData>(PROFESSORS);
 	const { loading: loadingCourses, data: coursesData } = useQuery<CourseData>(COURSES);
 
 	const handleInputChange = (newValue: string, { action }: { action: InputActionTypes }) => {

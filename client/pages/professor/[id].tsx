@@ -17,45 +17,52 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 	const [allComments, setAllComments] = useState(all_comments);
 	const [show, setShow] = useState(false);
 
-	useEffect(() => {	
+	useEffect(() => {
 		setComments(prof_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
-		setAllComments(all_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)).reverse());
+		setAllComments(
+			all_comments
+				.slice()
+				.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+				.reverse()
+		);
 	}, [prof_comments, all_comments]);
-	
+
 	if (!comments) {
 		return <></>;
 	}
 
 	const newComment = {
 		marginBottom: '30px',
-	}
+	};
 
 	const addOneComment = (comment: CommentType) => {
-		comments.unshift(comment)
-		allComments.unshift(comment)
+		comments.unshift(comment);
+		allComments.unshift(comment);
 		updateComments(comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
 		updateAllComments(allComments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
-	}
+	};
 
 	const deleteOneComment = (commentID: number) => {
-		const updated_comments = comments.filter((comment) => commentID != parseInt(comment['id']));
-		updateComments(updated_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
-	}
+		const updated_comments = comments.filter(comment => commentID != parseInt(comment['id']));
+		updateComments(
+			updated_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+		);
+	};
 
 	const checkIfStudentHasComment = () => {
 		const studentID = window.sessionStorage.getItem('request-onid');
 
-		return comments.filter((comment) => comment.ONID == studentID).length == 0 ? false : true
-
-	}
+		return comments.filter(comment => comment.ONID == studentID).length == 0 ? false : true;
+	};
 
 	return (
 		<Container>
-			{!checkIfStudentHasComment() &&
-			(<Button variant='outline-info' onClick={() => setShow(true)} style={newComment}>
-				New Comment
-			</Button>)}
-			<AddComment show={show} setShow={setShow} addOneComment={addOneComment}/>
+			{!checkIfStudentHasComment() && (
+				<Button variant='outline-info' onClick={() => setShow(true)} style={newComment}>
+					New Comment
+				</Button>
+			)}
+			<AddComment show={show} setShow={setShow} addOneComment={addOneComment} />
 			<h3>Comments:</h3>
 			{comments.map(comment => (
 				<Comment key={comment.id} comment={comment} deleteOneComment={deleteOneComment} />
@@ -75,19 +82,24 @@ const ProfessorPage = () => {
 		skip: !router.query.id,
 	});
 
-	const { loading: loading_all_comments, data: data_all_comments } = useQuery<CommentData>(COMMENTS);
+	const { loading: loading_all_comments, data: data_all_comments } =
+		useQuery<CommentData>(COMMENTS);
 
 	const [professor, setProfessor] = useState<any>();
 	const [comments, setComments] = useState<any>([]);
 	const [allComments, setAllComments] = useState<any>([]);
 
 	useEffect(() => {
-		if(data){
-			setProfessor(data.professor)
+		if (data) {
+			setProfessor(data.professor);
 		}
-		if(data_all_comments){
+		if (data_all_comments) {
 			setAllComments(data_all_comments.comments);
-			setComments(data_all_comments.comments.filter((comment) => comment.professorID === parseInt(router.query.id as string)));
+			setComments(
+				data_all_comments.comments.filter(
+					comment => comment.professorID === parseInt(router.query.id as string)
+				)
+			);
 		}
 	}, [data, data_all_comments]);
 
@@ -105,8 +117,12 @@ const ProfessorPage = () => {
 			</Head>
 			<Header searchbarToggled={true} />
 			<Info professor={professor} comments={comments} />
-			<ProfessorComments prof_comments={comments} all_comments={allComments} 
-				updateComments={setComments} updateAllComments={setAllComments} />
+			<ProfessorComments
+				prof_comments={comments}
+				all_comments={allComments}
+				updateComments={setComments}
+				updateAllComments={setAllComments}
+			/>
 		</>
 	);
 };
