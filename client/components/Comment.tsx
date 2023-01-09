@@ -110,7 +110,10 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 			<div className='mt-2'>
 				<span>Tags: {comment.tags.length == 0 ? 'No tags found' : null}</span>
 				{comment.tags.map(tag => (
-					<span key={tag} className='border rounded border-info ml-2 p-1'>
+					<span
+						key={tag}
+						className='border rounded border-info text-nowrap d-inline-block ml-2 p-1'
+					>
 						<span style={{ marginRight: 5 }}>{tag}</span>
 					</span>
 				))}

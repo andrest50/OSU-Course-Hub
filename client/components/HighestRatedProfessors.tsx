@@ -71,38 +71,42 @@ const HighestRatedProfessors: React.FC = () => {
 			className='border'
 		>
 			<h4 style={{ textAlign: 'center', padding: '10px' }}>Highest Rated Professors:</h4>
-			{data.professors.map(professor => (
-				<div
-					style={{
-						display: 'flex',
-						justifyContent: 'center',
-						width: '80%',
-						maxWidth: '600px',
-						marginRight: '30px',
-					}}
-					key={professor.id}
-				>
-					<Card
-						style={{ width: '90%', padding: '10px', marginTop: '10px' }}
-						bg='light'
-						border='dark'
+			{data.professors.length === 0 ? (
+				<div>There are no professors yet.</div>
+			) : (
+				data.professors.map(professor => (
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'center',
+							width: '80%',
+							maxWidth: '600px',
+							marginRight: '30px',
+						}}
+						key={professor.id}
 					>
-						<Row className='pl-3 pr-4'>
-							<Card.Title>
-								<Link href={`/professor/${professor.id}`}>
-									<b>
-										{professor.firstName} {professor.lastName}
-									</b>
-								</Link>
-							</Card.Title>
-							<Card.Text style={department} className='text-right ml-auto'>
-								{professor.college}
-							</Card.Text>
-						</Row>
-						<ProfessorQuality id={professor.id} />
-					</Card>
-				</div>
-			))}
+						<Card
+							style={{ width: '90%', padding: '10px', marginTop: '10px' }}
+							bg='light'
+							border='dark'
+						>
+							<Row className='pl-3 pr-4'>
+								<Card.Title>
+									<Link key={professor.id} href={`/professor/${professor.id}`}>
+										<b>
+											{professor.firstName} {professor.lastName}
+										</b>
+									</Link>
+								</Card.Title>
+								<Card.Text style={department} className='text-right ml-auto'>
+									{professor.college}
+								</Card.Text>
+							</Row>
+							<ProfessorQuality id={professor.id} />
+						</Card>
+					</div>
+				))
+			)}
 		</div>
 	);
 };
