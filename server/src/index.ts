@@ -21,13 +21,15 @@ import { Textbook } from './entity/Textbook';
 const main = async () => {
     dotenv.config();
 
+    const port = process.env.PORT || 5000
+
     const dataSource = new DataSource({
         type: 'postgres',
         host: 'localhost',
         port: parseInt(<string>process.env.DATABASE_PORT, 10) || 5432,
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
-        database: 'OSU-Course-Hub',
+        database: 'osucoursehub',
         synchronize: true,
         entities: [Comment, Course, CourseProfessor, CourseTextbook, Professor, Student, Textbook],
     });
@@ -63,8 +65,8 @@ const main = async () => {
     await apolloServer.start();
     apolloServer.applyMiddleware({ app });
 
-    app.listen(process.env.PORT, () => {
-        console.log(`Server started on port ${process.env.PORT}`);
+    app.listen(port, () => {
+        console.log(`Server started on port ${port}`);
     });
 };
 

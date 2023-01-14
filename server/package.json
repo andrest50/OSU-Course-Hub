@@ -2,7 +2,7 @@
 	"name": "osu-course-hub",
 	"version": "0.1.0",
 	"repository": "https://github.com/andrest50/OSU-course-hub.git",
-    "author": "Andres Tobon <andrest2455@gmail.com>",
+	"author": "Andres Tobon <andrest2455@gmail.com>",
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
