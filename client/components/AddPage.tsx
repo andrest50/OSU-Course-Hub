@@ -5,7 +5,7 @@ import { CREATE_COURSE, CREATE_PROFESSOR } from 'utils/graphql';
 import { Colleges, Departments } from '../utils/util';
 import { useRouter } from 'next/router';
 
-export default function AddProfessor() {
+export default function AddCourseOrProfessor() {
 	const router = useRouter();
 	const [values, setValues] = useState({
 		type: 'course',
@@ -20,18 +20,28 @@ export default function AddProfessor() {
 	const [setProfessor] = useMutation(CREATE_PROFESSOR);
 	const [setCourse] = useMutation(CREATE_COURSE);
 
-	const handleClose = () => setShow(false);
-	const handleShow = () => setShow(true);
+	const handleClose = () => { 
+		console.debug("Add page close modal")
+		setShow(false);
+	};
+	const handleShow = () => { 
+		console.debug("Add page show modal");
+		setShow(true);
+	}
 
 	const handleChange = (e: any) => {
+		console.debug("Add page form change: ", e, e.target.name, e.target.value);
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (values.type == 'course') {
-			// console.log({ deparment: values.department, number: values.number });
-			setCourse({ variables: { department: values.department, number: values.number } });
+			setCourse({ variables: { department: values.department, number: values.number } })
+				.then((resp) => {
+					console.debug("Course created: ", resp);
+					router.push(`/course/${resp.data.createCourse.id}`)
+				});
 		} else if (values.type == 'professor') {
 			setProfessor({
 				variables: {
@@ -39,12 +49,14 @@ export default function AddProfessor() {
 					lastName: values.lastname,
 					college: values.college,
 				},
-			});
+			})
+				.then((resp) => {
+					console.debug("Professor created: ", resp);
+					router.push(`/professor/${resp.data.createProfessor.id}`);
+				});
 		} else {
 			alert('Invalid type error from AddProfessor.tsx');
 		}
-		setShow(false);
-		router.reload();
 	};
 
 	return (

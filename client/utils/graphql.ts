@@ -185,6 +185,7 @@ export const COURSE_PROFESSORS = gql`
 export const CREATE_COURSE = gql`
 	mutation createCourse($department: String!, $number: String!) {
 		createCourse(input: { department: $department, number: $number }) {
+			id
 			department
 			number
 		}
