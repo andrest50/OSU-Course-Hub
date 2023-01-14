@@ -1,11 +1,12 @@
 import { UserInputError } from 'apollo-server-express';
 import { Max, Min } from 'class-validator';
 import { Arg, Field, ID, InputType, Int, Mutation, Query, Resolver } from 'type-graphql';
+import { In } from 'typeorm';
 import { Course } from '../entity/Course';
 import { CourseTextbook } from '../entity/CourseTextbook';
 import { Textbook } from '../entity/Textbook';
-import { In } from 'typeorm';
 import { Terms } from '../util';
+import { logger } from '../logger';
 
 @InputType()
 class TextbookInput {
@@ -40,9 +41,12 @@ class TextbookInput {
 export class TextbookResolver {
     @Query(() => [Textbook])
     async courseTextbooks(@Arg('courseID') id: number): Promise<Textbook[]> {
-        const textbooks = await CourseTextbook.find({ where: { courseID: id } });
-        const textbookISBNs = textbooks.map(textbook => textbook.ISBN);
-        return Textbook.find({ where: { ISBN: In(textbookISBNs) } });
+        logger.info(`Fetching list of textbooks for course with arguments: ${{ CourseID: id }}`);
+        const courseTextbooks = await CourseTextbook.find({ where: { courseID: id } });
+        const textbookISBNs = courseTextbooks.map(textbook => textbook.ISBN);
+        const textbooks = Textbook.find({ where: { ISBN: In(textbookISBNs) } });
+        logger.debug(`Fetched list of textbooks: ${textbooks}`);
+        return textbooks;
     }
 
     @Mutation(() => Textbook)
@@ -52,38 +56,50 @@ export class TextbookResolver {
         @Arg('termUsed') termUsed: string,
         @Arg('yearUsed') yearUsed: number
     ): Promise<Textbook> {
-        const validationErrors: any = {};
+        logger.info(
+            `Adding textbook to course with arguments: ${{
+                Input: input,
+                CourseID: courseID,
+                TermUsed: termUsed,
+                YearUsed: yearUsed,
+            }}`
+        );
         if (Terms.indexOf(termUsed) === -1) {
-            validationErrors.term = `Invalid Term: ${termUsed}`;
+            logger.error(`Invalid Term: ${termUsed}`);
+            throw new UserInputError(`Invalid Term: ${termUsed}`);
         }
         if (yearUsed.toString().length !== 4) {
-            validationErrors.year = `Invalid Year: ${yearUsed}`;
+            logger.error(`Invalid Year: ${yearUsed}`);
+            throw new UserInputError(`Invalid Year: ${yearUsed}`);
         }
         const duplicateTextbook = await CourseTextbook.findOne({
             where: { courseID, ISBN: input.ISBN },
         });
         if (duplicateTextbook) {
-            validationErrors.textbook = `Textbook with ISBN: ${input.ISBN} for course with ID: ${courseID} already exists`;
+            logger.error(
+                `Textbook with ISBN: ${input.ISBN} for course with ID: ${courseID} already exists`
+            );
+            throw new UserInputError(
+                `Textbook with ISBN: ${input.ISBN} for course with ID: ${courseID} already exists`
+            );
         }
         const course = await Course.findOne({ where: { id: courseID } });
         if (!course) {
-            validationErrors.course = `Could not find course with given ID: ${courseID}`;
-        }
-        if (Object.keys(validationErrors).length > 0) {
-            throw new UserInputError('Validation error(s)', {
-                validationErrors,
-            });
+            logger.error(`Could not find course with given ID: ${courseID}`);
+            throw new UserInputError(`Could not find course with given ID: ${courseID}`);
         }
         let textbook = await Textbook.findOne({ where: { ISBN: input.ISBN } });
         if (!textbook) {
             textbook = await Textbook.create(Textbook).save();
+            logger.debug(`Created new textbook: ${textbook}`);
         }
-        await CourseTextbook.create({
+        const courseTextbook = await CourseTextbook.create({
             courseID,
             ISBN: input.ISBN,
             termUsed,
             yearUsed,
         }).save();
+        logger.debug(`Added textbook to course: ${courseTextbook}`);
         return textbook;
     }
 }

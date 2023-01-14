@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+// TODO: split queries into separate files by resource type, maybe by query/mutation too
+
 // COMMENT //
 export const COMMENTS = gql`
 	query comments {
@@ -261,29 +263,6 @@ export const CREATE_PROFESSOR = gql`
 			firstName
 			lastName
 			college
-		}
-	}
-`;
-
-export const ADD_COURSE_TO_PROFESSOR = gql`
-	mutation professorInfo(
-		$professorID: Float!
-		$courseID: Float!
-		$termTaught: String!
-		$yearTaught: Float!
-	) {
-		addCourseToProfessor(
-			professorID: $professorID
-			courseID: $courseID
-			termTaught: $termTaught
-			yearTaught: $yearTaught
-		) {
-			professor {
-				id
-				firstName
-				lastName
-				college
-			}
 		}
 	}
 `;

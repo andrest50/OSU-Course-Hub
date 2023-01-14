@@ -56,7 +56,8 @@ export default function AddCourseOrProfessor() {
 							console.debug("Course professor added: ", res)
 							router.push(`/course/${resp.data.createCourse.id}`)
 						})
-				});
+				})
+				.catch((err) => console.log('Failed to create course with error: ', err));
 		} else if (values.type == 'professor') {
 			setProfessor({
 				variables: {

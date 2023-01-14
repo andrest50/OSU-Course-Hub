@@ -6,6 +6,7 @@ import { Course } from '../entity/Course';
 import { Professor } from '../entity/Professor';
 import { Student } from '../entity/Student';
 import { Campuses, Grades, Tags } from '../util';
+import { logger } from '../logger';
 
 @InputType()
 class CommentInput {
@@ -55,12 +56,14 @@ class CommentInput {
 export class CommentResolver {
     @Query(() => [Comment])
     async comments(): Promise<Comment[]> {
+        logger.info('Fetching list of comments');
         const comments = await Comment.find({});
         return comments.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
     }
 
     @Query(() => [Comment])
     async courseComments(@Arg('courseID') id: number): Promise<Comment[]> {
+        logger.info(`Fetching list of comments for course with arguments: ${{ CourseID: id }}`);
         const comments = await Comment.find({});
         return comments
             .filter(comment => comment.courseID === id)
@@ -69,6 +72,9 @@ export class CommentResolver {
 
     @Query(() => [Comment])
     async professorComments(@Arg('professorID') id: number): Promise<Comment[]> {
+        logger.info(
+            `Fetching list of comments for professor with arguments: ${{ ProfessorID: id }}`
+        );
         const comments = await Comment.find({});
         return comments
             .filter(comment => comment.professorID === id)
@@ -77,12 +83,14 @@ export class CommentResolver {
 
     @Query(() => [Comment])
     async studentComments(@Arg('ONID') ONID: string): Promise<Comment[]> {
+        logger.info(`Fetching list of comments by student with arguments: ${{ ONID: ONID }}`);
         const comments = await Comment.find({});
         return comments
             .filter(comment => comment.ONID === ONID)
             .sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
     }
 
+    // TODO: clean up logic
     @Mutation(() => Comment)
     async createComment(
         @Arg('input')
@@ -101,21 +109,31 @@ export class CommentResolver {
             tags,
         }: CommentInput
     ): Promise<Comment> {
+        logger.info(
+            `Creating comment with arguments: ${{
+                ONID: ONID,
+                ProfessorID: professorID,
+                CourseID: courseID,
+            }}`
+        );
         const student = await Student.findOne({ where: { ONID } });
-        const validationErrors: any = {};
         if (!student) {
-            validationErrors.student = `Could not find student with given ONID: ${ONID}`;
+            logger.error(`Could not find student with given ONID: ${ONID}`);
+            throw new UserInputError(`Could not find student with given ONID: ${ONID}`);
         }
         if (campus && Campuses.indexOf(campus) === -1) {
-            validationErrors.campus = `Invalid campus: ${campus}`;
+            logger.error(`Invalid campus: ${campus}`);
+            throw new UserInputError(`Invalid campus: ${campus}`);
         }
         if (gradeReceived && Grades.indexOf(gradeReceived) === -1) {
-            validationErrors.gradeReceived = `Invalid grade: ${gradeReceived}`;
+            logger.error(`Invalid grade: ${gradeReceived}`);
+            throw new UserInputError(`Invalid grade: ${gradeReceived}`);
         }
         if (tags) {
             for (let i = 0; i < tags.length; i++) {
                 if (Tags.indexOf(tags[i]) === -1) {
-                    validationErrors.tag = `Invalid tag: ${tags[i]}`;
+                    logger.error(`Invalid tag: ${tags[i]}`);
+                    throw new UserInputError(`Invalid tag: ${tags[i]}`);
                 }
             }
         }
@@ -137,9 +155,11 @@ export class CommentResolver {
                     likes: 0,
                     dislikes: 0,
                 }).save();
+                logger.debug(`Created new comment: ${comment}`);
                 return comment;
             }
-            validationErrors.professor = `Could not find professor with given ID: ${professorID}`;
+            logger.error(`Could not find professor with given ID: ${professorID}`);
+            throw new UserInputError(`Could not find professor with given ID: ${professorID}`);
         }
         const course = await Course.find({ where: { id: courseID } });
         if (course) {
@@ -158,21 +178,21 @@ export class CommentResolver {
                 likes: 0,
                 dislikes: 0,
             }).save();
+            logger.debug(`Created new comment: ${comment}`);
             return comment;
         }
-        validationErrors.course = `Could not find course with given ID: ${courseID}`;
-        throw new UserInputError('Validation error(s)', validationErrors);
+        logger.error(`Could not find course with given ID: ${courseID}`);
+        throw new UserInputError(`Could not find course with given ID: ${courseID}`);
     }
 
     @Mutation(() => Boolean)
     async deleteComment(@Arg('commentID') id: number): Promise<boolean> {
         const comment = await Comment.find({ where: { id } });
-        if (comment) {
-            await Comment.delete({ id });
-            return true;
+        if (!comment) {
+            logger.error(`Could not find comment with given ID: ${id}`);
+            throw new UserInputError(`Could not find comment with given ID: ${id}`);
         }
-        throw new UserInputError('Validation error(s)', {
-            validationErrors: { course: `Could not find comment with given ID: ${id}` },
-        });
+        await Comment.delete({ id });
+        return true;
     }
 }

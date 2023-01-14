@@ -17,11 +17,12 @@ import { CourseTextbook } from './entity/CourseTextbook';
 import { Professor } from './entity/Professor';
 import { Student } from './entity/Student';
 import { Textbook } from './entity/Textbook';
+import { logger } from './logger';
 
 const main = async () => {
     dotenv.config();
 
-    const port = process.env.PORT || 5000
+    const port = process.env.PORT || 5000;
 
     const dataSource = new DataSource({
         type: 'postgres',
@@ -36,10 +37,10 @@ const main = async () => {
     dataSource
         .initialize()
         .then(() => {
-            console.log('Data Source has been initialized!');
+            logger.info('Data Source has been initialized!');
         })
         .catch(err => {
-            console.error('Error during Data Source initialization', err);
+            logger.error('Error during Data Source initialization', err);
         });
 
     const apolloServer = new ApolloServer({
@@ -66,8 +67,8 @@ const main = async () => {
     apolloServer.applyMiddleware({ app });
 
     app.listen(port, () => {
-        console.log(`Server started on port ${port}`);
+        logger.info(`Server started on port ${port}`);
     });
 };
 
-main().catch(err => console.log(err));
+main().catch(err => logger.error(err));
