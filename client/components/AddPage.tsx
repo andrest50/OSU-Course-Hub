@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
-import { useMutation } from '@apollo/client';
-import { CREATE_COURSE, CREATE_PROFESSOR } from 'utils/graphql';
+import { useQuery, useMutation } from '@apollo/client';
+import { CREATE_COURSE, CREATE_PROFESSOR, PROFESSORS, ADD_PROFESSOR_TO_COURSE } from 'utils/graphql';
 import { Colleges, Departments } from '../utils/util';
+import { ProfessorData } from '../utils/types';
 import { useRouter } from 'next/router';
 
 export default function AddCourseOrProfessor() {
@@ -14,11 +15,15 @@ export default function AddCourseOrProfessor() {
 		firstname: '',
 		lastname: '',
 		college: '',
+		professorId: '',
 	});
 	const [show, setShow] = useState(false);
 
+	const { loading, data } = useQuery<ProfessorData>(PROFESSORS);
+
 	const [setProfessor] = useMutation(CREATE_PROFESSOR);
 	const [setCourse] = useMutation(CREATE_COURSE);
+	const [setCourseProfessor] = useMutation(ADD_PROFESSOR_TO_COURSE);
 
 	const handleClose = () => { 
 		console.debug("Add page close modal")
@@ -40,7 +45,17 @@ export default function AddCourseOrProfessor() {
 			setCourse({ variables: { department: values.department, number: values.number } })
 				.then((resp) => {
 					console.debug("Course created: ", resp);
-					router.push(`/course/${resp.data.createCourse.id}`)
+					console.log(values.professorId);
+					setCourseProfessor({ variables: {
+						professorID: parseFloat(values.professorId),
+						courseID: parseFloat(resp.data.createCourse.id),
+						termTaught: 'Winter',
+						yearTaught: 2023,
+					} })
+						.then((res) => {
+							console.debug("Course professor added: ", res)
+							router.push(`/course/${resp.data.createCourse.id}`)
+						})
 				});
 		} else if (values.type == 'professor') {
 			setProfessor({
@@ -58,6 +73,10 @@ export default function AddCourseOrProfessor() {
 			alert('Invalid type error from AddProfessor.tsx');
 		}
 	};
+
+	if (loading) {
+		return <></>
+	}
 
 	return (
 		<div>
@@ -104,6 +123,23 @@ export default function AddCourseOrProfessor() {
 								className='mb-3'
 								required
 							/>
+							<Form.Label>Professor</Form.Label>
+							<Form.Control
+								as='select'
+								name='professorId'
+								onChange={handleChange}
+								className='mb-3'
+								required
+							>
+								<option value=''>Select a Professor</option>
+								{data?.professors.map((professor, idx) => {
+									return (
+										<option value={professor.id} key={idx}>
+											{professor.firstName} {professor.lastName}
+										</option>
+									);
+								})}
+							</Form.Control>
 						</>
 					)}
 

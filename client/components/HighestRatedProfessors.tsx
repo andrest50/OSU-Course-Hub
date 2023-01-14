@@ -72,7 +72,7 @@ const HighestRatedProfessors: React.FC = () => {
 		>
 			<h4 style={{ textAlign: 'center', padding: '10px' }}>Highest Rated Professors:</h4>
 			{data.professors.length === 0 ? (
-				<div>There are no professors yet.</div>
+				<div>No professors have been rated yet.</div>
 			) : (
 				data.professors.map(professor => (
 					<div

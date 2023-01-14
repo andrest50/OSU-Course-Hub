@@ -205,12 +205,7 @@ export const ADD_PROFESSOR_TO_COURSE = gql`
 			termTaught: $termTaught
 			yearTaught: $yearTaught
 		) {
-			professor {
-				id
-				firstName
-				lastName
-				college
-			}
+			id
 		}
 	}
 `;

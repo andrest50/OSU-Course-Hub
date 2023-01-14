@@ -16,9 +16,6 @@ const StudentPage = () => {
 	const { loading, data } = useQuery<StudentType>(STUDENT, {
 		variables: {
 			ONID: router.query.id,
-			/*ONID: /^\d+$/.test(router.query.id as string)
-				? parseInt(router.query.id as string)
-				: null,*/
 		},
 		skip: !router.query.id,
 	});
@@ -27,7 +24,8 @@ const StudentPage = () => {
 		STUDENT_COMMENTS,
 		{
 			variables: { ONID: router.query.id },
-		}
+			skip: !router.query.id
+		},
 	);
 
 	const [student, setStudent] = useState<any>();
@@ -42,15 +40,15 @@ const StudentPage = () => {
 		}
 	}, [data, data_comments]);
 
+	const deleteOneComment = (commentID: number) => {
+		setComments(comments.filter(comment => commentID != parseInt(comment['id'])));
+	};
+
 	if (loading || loading_comments || !router.query.id) {
 		return <></>;
 	} else if (!data) {
 		return <Error statusCode={404} />;
 	}
-
-	const deleteOneComment = (commentID: number) => {
-		setComments(comments.filter(comment => commentID != parseInt(comment['id'])));
-	};
 
 	return (
 		<>
