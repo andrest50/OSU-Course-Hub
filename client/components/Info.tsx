@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Card, Container } from 'react-bootstrap';
-import { CommentData, Course, Professor, CommentType } from '../utils/types';
+import { Course, Professor, CommentType } from '../utils/types';
 import CourseProfessors from './CourseProfessors';
 import ProfessorCourses from './ProfessorCourses';
 import Tags from './Tags';

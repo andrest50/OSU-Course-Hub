@@ -7,7 +7,8 @@ import { Container } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header';
 import StudentInfo from '../../components/StudentInfo';
-import { STUDENT, STUDENT_COMMENTS } from '../../utils/graphql';
+import { STUDENT } from '../../graphql/queries/student';
+import { STUDENT_COMMENTS } from '../../graphql/queries/comment';
 import { StudentType, CommentData } from '../../utils/types';
 import Comment from '../../components/Comment';
 
@@ -61,7 +62,6 @@ const StudentPage = () => {
 				<StudentInfo student={student} comments={comments} />
 				{comments
 					.slice()
-					.reverse()
 					.map(comment => (
 						<Comment
 							key={comment.id}

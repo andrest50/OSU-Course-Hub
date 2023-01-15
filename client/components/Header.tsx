@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Nav, Navbar } from 'react-bootstrap';
-import { CREATE_STUDENT } from '../utils/graphql';
+import { CREATE_STUDENT } from 'graphql/mutations/student';
 import { Auth } from './Auth';
 import Searchbar from './Searchbar';
 import AddPage from './AddPage';

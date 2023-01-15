@@ -2,8 +2,8 @@ import { useQuery } from '@apollo/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Card, Row } from 'react-bootstrap';
-import { CommentData } from '../utils/types';
-import { COMMENTS } from '../utils/graphql';
+import { RecentCommentData } from '../utils/types';
+import { RECENT_COMMENTS } from 'graphql/queries/comment';
 import RecentCommentTitle from './RecentCommentTitle';
 
 const date = {
@@ -12,14 +12,13 @@ const date = {
 };
 
 const RecentComments: React.FC = () => {
-	const { loading, data } = useQuery<CommentData>(COMMENTS);
+	const { loading, data } = useQuery<RecentCommentData>(RECENT_COMMENTS);
 
 	if (loading || !data) {
 		return <></>;
 	}
 
-	var comments = [...data.comments];
-	comments.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+	var comments = [...data.recentComments];
 
 	return (
 		<div
@@ -34,10 +33,10 @@ const RecentComments: React.FC = () => {
 			className='border'
 		>
 			<h4 style={{ textAlign: 'center', padding: '10px' }}>Recent Comments:</h4>
-			{data.comments.length === 0 ? (
+			{comments.length === 0 ? (
 				<div>There are no comments yet.</div>
 			) : (
-				comments.slice(0, Math.min(4, data.comments.length)).map(comment => (
+				comments.map(comment => (
 					<Card
 						style={{
 							width: '80%',

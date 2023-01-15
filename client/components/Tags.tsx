@@ -1,4 +1,4 @@
-import { CommentData, CommentType } from '../utils/types';
+import { CommentType } from '../utils/types';
 
 const tagBlock = {
 	marginTop: 10,

@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { COURSE, PROFESSOR } from '../utils/graphql';
+import { COURSE } from 'graphql/queries/course';
+import { PROFESSOR } from 'graphql/queries/professor';
 
 interface Props {
 	courseID?: number;

@@ -57,17 +57,31 @@ export class CommentResolver {
     @Query(() => [Comment])
     async comments(): Promise<Comment[]> {
         logger.info('Fetching list of comments');
-        const comments = await Comment.find({});
-        return comments.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+        const comments = await Comment.find({
+            order: { createdAt: 'DESC' },
+        });
+        return comments;
+    }
+
+    // Same as retrieving comments, but only get first five
+    @Query(() => [Comment])
+    async recentComments(): Promise<Comment[]> {
+        logger.info('Fetching list of most recent comments');
+        const comments = await Comment.find({
+            order: { createdAt: 'DESC' },
+            take: 5,
+        });
+        return comments;
     }
 
     @Query(() => [Comment])
     async courseComments(@Arg('courseID') id: number): Promise<Comment[]> {
         logger.info(`Fetching list of comments for course with arguments: ${{ CourseID: id }}`);
-        const comments = await Comment.find({});
-        return comments
-            .filter(comment => comment.courseID === id)
-            .sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+        const comments = await Comment.find({
+            order: { createdAt: 'DESC' },
+            where: { courseID: id },
+        });
+        return comments.filter(comment => comment.courseID === id);
     }
 
     @Query(() => [Comment])
@@ -75,19 +89,21 @@ export class CommentResolver {
         logger.info(
             `Fetching list of comments for professor with arguments: ${{ ProfessorID: id }}`
         );
-        const comments = await Comment.find({});
-        return comments
-            .filter(comment => comment.professorID === id)
-            .sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+        const comments = await Comment.find({
+            order: { createdAt: 'DESC' },
+            where: { professorID: id },
+        });
+        return comments;
     }
 
     @Query(() => [Comment])
     async studentComments(@Arg('ONID') ONID: string): Promise<Comment[]> {
         logger.info(`Fetching list of comments by student with arguments: ${{ ONID: ONID }}`);
-        const comments = await Comment.find({});
-        return comments
-            .filter(comment => comment.ONID === ONID)
-            .sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1));
+        const comments = await Comment.find({
+            order: { createdAt: 'DESC' },
+            where: { ONID: ONID },
+        });
+        return comments;
     }
 
     // TODO: clean up logic

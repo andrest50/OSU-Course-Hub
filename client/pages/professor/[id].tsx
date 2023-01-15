@@ -2,10 +2,11 @@ import { useQuery } from '@apollo/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Error from 'next/error';
 import Head from 'next/head';
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import { Container, Button } from 'react-bootstrap';
-import { PROFESSOR, COMMENTS } from 'utils/graphql';
+import { PROFESSOR } from 'graphql/queries/professor';
+import { COMMENTS } from 'graphql/queries/comment';
 import Comment from '../../components/Comment';
 import Header from '../../components/Header';
 import Info from '../../components/Info';
@@ -18,13 +19,8 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 	const [show, setShow] = useState(false);
 
 	useEffect(() => {
-		setComments(prof_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
-		setAllComments(
-			all_comments
-				.slice()
-				.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-				.reverse()
-		);
+		setComments(prof_comments.slice());
+		setAllComments(all_comments.slice());
 	}, [prof_comments, all_comments]);
 
 	if (!comments) {
@@ -38,15 +34,13 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 	const addOneComment = (comment: CommentType) => {
 		comments.unshift(comment);
 		allComments.unshift(comment);
-		updateComments(comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
-		updateAllComments(allComments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)));
+		updateComments(comments);
+		updateAllComments(allComments);
 	};
 
 	const deleteOneComment = (commentID: number) => {
 		const updated_comments = comments.filter(comment => commentID != parseInt(comment['id']));
-		updateComments(
-			updated_comments.slice().sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-		);
+		updateComments(updated_comments);
 	};
 
 	const checkIfStudentHasComment = () => {
@@ -57,11 +51,9 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 
 	return (
 		<Container>
-			{!checkIfStudentHasComment() && (
-				<Button variant='outline-info' onClick={() => setShow(true)} style={newComment}>
-					New Comment
-				</Button>
-			)}
+			<Button variant='outline-info' onClick={() => setShow(true)} style={newComment}>
+				New Comment
+			</Button>
 			<AddComment show={show} setShow={setShow} addOneComment={addOneComment} />
 			<h3>Comments:</h3>
 			{comments.map(comment => (

@@ -29,6 +29,10 @@ export interface Professor {
 	comments: CommentType[];
 }
 
+export interface RecentCommentData {
+	recentComments: CommentType[];
+}
+
 export interface CommentData {
 	comments: CommentType[];
 }

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { CommentData, Student, CommentType } from '../utils/types';
+import { Student, CommentType } from '../utils/types';
 
 interface Props {
 	student: Student;

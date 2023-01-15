@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
-import { CREATE_COURSE, CREATE_PROFESSOR, PROFESSORS, ADD_PROFESSOR_TO_COURSE } from 'utils/graphql';
+import { CREATE_COURSE, ADD_PROFESSOR_TO_COURSE } from 'graphql/mutations/course';
+import { CREATE_PROFESSOR } from 'graphql/mutations/professor';
+import { PROFESSORS } from 'graphql/queries/professor';
 import { Colleges, Departments } from '../utils/util';
 import { ProfessorData } from '../utils/types';
 import { useRouter } from 'next/router';

@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import Link from 'next/link';
 import React from 'react';
 import { CourseData } from '../utils/types';
-import { PROFESSOR_COURSES } from '../utils/graphql';
+import { PROFESSOR_COURSES } from 'graphql/queries/professor';
 
 const courseBlock = {
 	marginTop: 10,

@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import Link from 'next/link';
 import React from 'react';
-import { COURSE_PROFESSORS } from '../utils/graphql';
+import { COURSE_PROFESSORS } from 'graphql/queries/course';
 import { ProfessorData } from '../utils/types';
 
 const professorBlock = {

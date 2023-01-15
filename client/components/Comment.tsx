@@ -1,14 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Row, Spinner } from 'react-bootstrap';
+import { Button, Card, Row } from 'react-bootstrap';
 import {
 	DISLIKE_COMMENT,
 	LIKE_COMMENT,
 	DELETE_COMMENT,
-	STUDENT,
-	COURSE,
-	PROFESSOR,
-} from 'utils/graphql';
+} from 'graphql/mutations/comment';
+import {STUDENT} from 'graphql/queries/student';
+import {COURSE} from 'graphql/queries/course';
+import {PROFESSOR} from 'graphql/queries/professor';
 import { CommentType, StudentType } from '../utils/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';

@@ -60,7 +60,7 @@ export class ProfessorResolver {
         comments.forEach(({ professorID, quality }) => {
             if (professorID) {
                 if (professorID in professorQualities) {
-                    professorQualities.get(professorID).push(quality);
+                    professorQualities[professorID].push(quality);
                 } else {
                     professorQualities[professorID] = [quality];
                 }

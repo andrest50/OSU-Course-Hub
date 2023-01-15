@@ -3,7 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Link from 'next/link';
 import React from 'react';
 import { Card, Row } from 'react-bootstrap';
-import { HIGHEST_RATED_PROFESSORS, PROFESSOR_COMMENTS } from '../utils/graphql';
+import { HIGHEST_RATED_PROFESSORS } from 'graphql/queries/professor';
+import { PROFESSOR_COMMENTS } from 'graphql/queries/comment';
 import { ProfessorData } from '../utils/types';
 
 const variable = {

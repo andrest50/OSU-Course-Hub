@@ -2,7 +2,7 @@ export const Terms = ['Fall', 'Winter', 'Spring', 'Summer'];
 
 export const Campuses = ['Corvallis', 'Cascades', 'Ecampus', 'Hybrid'];
 
-export const Grades = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+export const Grades = ['N/A', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
 
 export const Colleges = [
     'Agricultural Science',

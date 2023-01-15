@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { CREATE_COMMENT } from '../utils/graphql';
+import { CREATE_COMMENT } from 'graphql/mutations/comment';
 import { CommentType } from '../utils/types';
 import { Campuses, Grades, Tags } from '../utils/util';
 import Router from 'next/router';
