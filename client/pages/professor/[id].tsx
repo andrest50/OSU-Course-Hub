@@ -3,25 +3,30 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Error from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import { Container, Button } from 'react-bootstrap';
-import { PROFESSOR } from 'graphql/queries/professor';
-import { COMMENTS } from 'graphql/queries/comment';
+import { PROFESSOR } from '../../graphql/queries/professor';
+import { COMMENTS } from '../../graphql/queries/comment';
 import Comment from '../../components/Comment';
 import Header from '../../components/Header';
 import Info from '../../components/Info';
 import { CommentData, ProfessorType, CommentType } from '../../utils/types';
 import AddComment from '../../components/AddComment';
 
-const ProfessorComments = ({ prof_comments, all_comments, updateComments, updateAllComments }) => {
-	const [comments, setComments] = useState(prof_comments);
-	const [allComments, setAllComments] = useState(all_comments);
+const ProfessorComments = ({
+	professorComments,
+	propAllComments,
+	updateComments,
+	updateAllComments,
+}) => {
+	const [comments, setComments] = useState(professorComments);
+	const [allComments, setAllComments] = useState(propAllComments);
 	const [show, setShow] = useState(false);
 
 	useEffect(() => {
-		setComments(prof_comments.slice());
-		setAllComments(all_comments.slice());
-	}, [prof_comments, all_comments]);
+		setComments(professorComments.slice());
+		setAllComments(propAllComments.slice());
+	}, [professorComments, propAllComments]);
 
 	if (!comments) {
 		return <></>;
@@ -39,14 +44,8 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 	};
 
 	const deleteOneComment = (commentID: number) => {
-		const updated_comments = comments.filter(comment => commentID != parseInt(comment['id']));
-		updateComments(updated_comments);
-	};
-
-	const checkIfStudentHasComment = () => {
-		const studentID = window.sessionStorage.getItem('request-onid');
-
-		return comments.filter(comment => comment.ONID == studentID).length == 0 ? false : true;
+		const updatedComments = comments.filter(comment => commentID != parseInt(comment['id']));
+		updateComments(updatedComments);
 	};
 
 	return (
@@ -63,7 +62,7 @@ const ProfessorComments = ({ prof_comments, all_comments, updateComments, update
 	);
 };
 
-const ProfessorPage = () => {
+const ProfessorPage = (): ReactElement => {
 	const router = useRouter();
 	const { loading, data } = useQuery<ProfessorType>(PROFESSOR, {
 		variables: {
@@ -74,8 +73,7 @@ const ProfessorPage = () => {
 		skip: !router.query.id,
 	});
 
-	const { loading: loading_all_comments, data: data_all_comments } =
-		useQuery<CommentData>(COMMENTS);
+	const { loading: loadingAllComments, data: dataAllComments } = useQuery<CommentData>(COMMENTS);
 
 	const [professor, setProfessor] = useState<any>();
 	const [comments, setComments] = useState<any>([]);
@@ -85,17 +83,17 @@ const ProfessorPage = () => {
 		if (data) {
 			setProfessor(data.professor);
 		}
-		if (data_all_comments) {
-			setAllComments(data_all_comments.comments);
+		if (dataAllComments) {
+			setAllComments(dataAllComments.comments);
 			setComments(
-				data_all_comments.comments.filter(
+				dataAllComments.comments.filter(
 					comment => comment.professorID === parseInt(router.query.id as string)
 				)
 			);
 		}
-	}, [data, data_all_comments]);
+	}, [data, dataAllComments]);
 
-	if (loading || loading_all_comments || !router.query.id) {
+	if (loading || loadingAllComments || !router.query.id) {
 		return <></>;
 	} else if (!data) {
 		return <Error statusCode={404} />;
@@ -110,8 +108,8 @@ const ProfessorPage = () => {
 			<Header searchbarToggled={true} />
 			<Info professor={professor} comments={comments} />
 			<ProfessorComments
-				prof_comments={comments}
-				all_comments={allComments}
+				professorComments={comments}
+				propAllComments={allComments}
 				updateComments={setComments}
 				updateAllComments={setAllComments}
 			/>

@@ -3,25 +3,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Error from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import { Container, Button } from 'react-bootstrap';
-import { COURSE } from 'graphql/queries/course';
-import { COMMENTS } from 'graphql/queries/comment';
+import { COURSE } from '../../graphql/queries/course';
+import { COMMENTS } from '../../graphql/queries/comment';
 import Comment from '../../components/Comment';
 import Header from '../../components/Header';
 import Info from '../../components/Info';
 import { CommentData, CourseType, CommentType } from '../../utils/types';
 import AddComment from '../../components/AddComment';
 
-const CourseComments = ({ course_comments, all_comments, updateComments, updateAllComments }) => {
-	const [comments, setComments] = useState(course_comments);
-	const [allComments, setAllComments] = useState(all_comments);
+const CourseComments = ({ courseComments, propAllComments, updateComments, updateAllComments }) => {
+	const [comments, setComments] = useState(courseComments);
+	const [allComments, setAllComments] = useState(propAllComments);
 	const [show, setShow] = useState(false);
 
 	useEffect(() => {
-		setComments(course_comments.slice());
-		setAllComments(all_comments.slice());
-	}, [course_comments, all_comments]);
+		setComments(courseComments.slice());
+		setAllComments(propAllComments.slice());
+	}, [courseComments, propAllComments]);
 
 	if (!comments) {
 		return <></>;
@@ -39,14 +39,8 @@ const CourseComments = ({ course_comments, all_comments, updateComments, updateA
 	};
 
 	const deleteOneComment = (commentID: number) => {
-		const updated_comments = comments.filter(comment => commentID != parseInt(comment['id']));
-		updateComments(updated_comments);
-	};
-
-	const checkIfStudentHasComment = () => {
-		const studentID = window.sessionStorage.getItem('request-onid');
-
-		return comments.filter(comment => comment.ONID == studentID).length == 0 ? false : true;
+		const updatedComments = comments.filter(comment => commentID != parseInt(comment['id']));
+		updateComments(updatedComments);
 	};
 
 	return (
@@ -63,7 +57,7 @@ const CourseComments = ({ course_comments, all_comments, updateComments, updateA
 	);
 };
 
-const CoursePage = () => {
+const CoursePage = (): ReactElement => {
 	const router = useRouter();
 	const { loading, data } = useQuery<CourseType>(COURSE, {
 		variables: {
@@ -74,8 +68,7 @@ const CoursePage = () => {
 		skip: !router.query.id,
 	});
 
-	const { loading: loading_all_comments, data: data_all_comments } =
-		useQuery<CommentData>(COMMENTS);
+	const { loading: loadingAllComments, data: dataAllComments } = useQuery<CommentData>(COMMENTS);
 
 	const [course, setCourse] = useState<any>();
 	const [comments, setComments] = useState<any>([]);
@@ -85,17 +78,17 @@ const CoursePage = () => {
 		if (data) {
 			setCourse(data.course);
 		}
-		if (data_all_comments) {
-			setAllComments(data_all_comments.comments);
+		if (dataAllComments) {
+			setAllComments(dataAllComments.comments);
 			setComments(
-				data_all_comments.comments.filter(
+				dataAllComments.comments.filter(
 					comment => comment.courseID === parseInt(router.query.id as string)
 				)
 			);
 		}
-	}, [data, data_all_comments]);
+	}, [data, dataAllComments]);
 
-	if (loading || loading_all_comments || !router.query.id) {
+	if (loading || loadingAllComments || !router.query.id) {
 		return <></>;
 	} else if (!data) {
 		return <Error statusCode={404} />;
@@ -110,8 +103,8 @@ const CoursePage = () => {
 			<Header searchbarToggled={true} />
 			<Info course={course} comments={comments} />
 			<CourseComments
-				course_comments={comments}
-				all_comments={allComments}
+				courseComments={comments}
+				propAllComments={allComments}
 				updateComments={setComments}
 				updateAllComments={setAllComments}
 			/>

@@ -22,9 +22,9 @@ const constant = {
 };
 
 interface Props {
+	comments: CommentType[];
 	course?: Course;
 	professor?: Professor;
-	comments: CommentType[];
 }
 
 const Info: React.FC<Props> = ({ course, professor, comments }) => {

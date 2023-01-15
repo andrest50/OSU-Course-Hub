@@ -73,7 +73,7 @@ export class ProfessorResolver {
                 professorQualities[id].length;
             professorQualitiesArr.push([parseInt(id), avgQuality]);
         });
-        professorQualitiesArr.sort((a, b) => b[1] - a[1]);
+        professorQualitiesArr.sort((a, b) => a[1] - b[1]);
         const topFiveRatedProfessors: number[] = [];
         for (let i = 0; i < Math.min(5, professorQualitiesArr.length); i++) {
             topFiveRatedProfessors.push(professorQualitiesArr[i][0]);

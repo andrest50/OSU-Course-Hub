@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 
-
 export const CREATE_COURSE = gql`
 	mutation createCourse($department: String!, $number: String!) {
 		createCourse(input: { department: $department, number: $number }) {

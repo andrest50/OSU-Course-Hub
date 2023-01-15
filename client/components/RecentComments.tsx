@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import { Card, Row } from 'react-bootstrap';
 import { RecentCommentData } from '../utils/types';
-import { RECENT_COMMENTS } from 'graphql/queries/comment';
+import { RECENT_COMMENTS } from '../graphql/queries/comment';
 import RecentCommentTitle from './RecentCommentTitle';
 
 const date = {
@@ -18,7 +18,7 @@ const RecentComments: React.FC = () => {
 		return <></>;
 	}
 
-	var comments = [...data.recentComments];
+	const comments = [...data.recentComments];
 
 	return (
 		<div

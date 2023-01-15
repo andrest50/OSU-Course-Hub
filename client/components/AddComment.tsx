@@ -1,15 +1,15 @@
 import { useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { CREATE_COMMENT } from 'graphql/mutations/comment';
+import { CREATE_COMMENT } from '../graphql/mutations/comment';
 import { CommentType } from '../utils/types';
 import { Campuses, Grades, Tags } from '../utils/util';
 import Router from 'next/router';
 
 interface Props {
-	show: boolean;
-	setShow: (value: boolean) => void;
 	addOneComment: (comment: CommentType) => void;
+	setShow: (value: boolean) => void;
+	show: boolean;
 }
 
 const AddComment: React.FC<Props> = ({ show, setShow, addOneComment }) => {

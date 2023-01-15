@@ -5,7 +5,7 @@ import React from 'react';
 import '../styles/globals.css';
 import { useApollo } from '../utils/withApollo';
 
-let App: React.FC<AppProps> = ({ Component, pageProps }) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 	const apolloClient = useApollo(pageProps.initialApolloState);
 	return (
 		<ApolloProvider client={apolloClient}>

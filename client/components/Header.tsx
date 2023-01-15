@@ -1,8 +1,8 @@
 import { useMutation } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Nav, Navbar } from 'react-bootstrap';
-import { CREATE_STUDENT } from 'graphql/mutations/student';
-import { Auth } from './Auth';
+import { CREATE_STUDENT } from '../graphql/mutations/student';
+import Auth from './Auth';
 import Searchbar from './Searchbar';
 import AddPage from './AddPage';
 
@@ -32,10 +32,10 @@ const Header: React.FC<Props> = props => {
 		if (window && window.sessionStorage && window.sessionStorage.getItem('request-onid')) {
 			setONID(window.sessionStorage.getItem('request-onid'));
 		} else {
-			const jwt_token = new URL(window.location.href).searchParams.get('jwt');
-			if (jwt_token) {
-				const split_token = jwt_token.split('.');
-				const newONID = JSON.parse(atob(split_token[1])).onid;
+			const jwtToken = new URL(window.location.href).searchParams.get('jwt');
+			if (jwtToken) {
+				const splitToken = jwtToken.split('.');
+				const newONID = JSON.parse(atob(splitToken[1])).onid;
 				window.sessionStorage.setItem('request-onid', newONID);
 				createStudent({ variables: { ONID: newONID } });
 				window.location.href = window.location.href.split('?')[0] + '';

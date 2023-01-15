@@ -1,14 +1,10 @@
 import { useMutation, useQuery } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { Button, Card, Row } from 'react-bootstrap';
-import {
-	DISLIKE_COMMENT,
-	LIKE_COMMENT,
-	DELETE_COMMENT,
-} from 'graphql/mutations/comment';
-import {STUDENT} from 'graphql/queries/student';
-import {COURSE} from 'graphql/queries/course';
-import {PROFESSOR} from 'graphql/queries/professor';
+import { DISLIKE_COMMENT, LIKE_COMMENT, DELETE_COMMENT } from '../graphql/mutations/comment';
+import { STUDENT } from '../graphql/queries/student';
+import { COURSE } from '../graphql/queries/course';
+import { PROFESSOR } from '../graphql/queries/professor';
 import { CommentType, StudentType } from '../utils/types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +22,7 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 		skip: !studentID,
 	});
 
-	const { loading: prof_course_loading, data: prof_course_data } = useQuery(
+	const { loading: profCourseLoading, data: profCourseData } = useQuery(
 		comment.courseID ? COURSE : PROFESSOR,
 		{
 			variables: {
@@ -56,7 +52,7 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 		}
 	}, [data]);
 
-	if (loading || prof_course_loading || (studentID && !data) || !prof_course_data) {
+	if (loading || profCourseLoading || (studentID && !data) || !profCourseData) {
 		return <></>;
 	}
 
@@ -69,11 +65,11 @@ const Comment: React.FC<Props> = ({ comment, deleteOneComment }) => {
 					</Card.Title>
 				) : comment.professorID ? (
 					<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
-						{prof_course_data.professor.firstName} {prof_course_data.professor.lastName}
+						{profCourseData.professor.firstName} {profCourseData.professor.lastName}
 					</Card.Title>
 				) : (
 					<Card.Title className='lead' style={{ fontSize: '1.5rem' }}>
-						{prof_course_data.course.department} {prof_course_data.course.number}
+						{profCourseData.course.department} {profCourseData.course.number}
 					</Card.Title>
 				)}
 				<Card.Text className='text-right ml-auto text-muted'>

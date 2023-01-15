@@ -2,10 +2,11 @@ import { useQuery } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 import React, { CSSProperties, useState } from 'react';
 import { Form } from 'react-bootstrap';
-import Select, { InputActionTypes } from 'react-select';
-import { COURSES } from 'graphql/queries/course';
-import { PROFESSORS } from 'graphql/queries/professor';
-import { CourseData, ProfessorData } from 'utils/types';
+// eslint-disable-next-line import/named
+import Select, { InputAction } from 'react-select';
+import { COURSES } from '../graphql/queries/course';
+import { PROFESSORS } from '../graphql/queries/professor';
+import { CourseData, ProfessorData } from '../utils/types';
 
 interface Props {
 	showButton: boolean;
@@ -45,7 +46,7 @@ const Searchbar: React.FC<Props> = props => {
 		useQuery<ProfessorData>(PROFESSORS);
 	const { loading: loadingCourses, data: coursesData } = useQuery<CourseData>(COURSES);
 
-	const handleInputChange = (newValue: string, { action }: { action: InputActionTypes }) => {
+	const handleInputChange = (newValue: string, { action }: { action: InputAction }) => {
 		if (action === 'input-change') {
 			openMenu(true);
 		}
@@ -68,7 +69,6 @@ const Searchbar: React.FC<Props> = props => {
 				value={null}
 				inputId='searchbar-select'
 				styles={select}
-				cacheOptions
 				placeholder={props.size === 'lg' ? 'Search classes and professors...' : 'Search...'}
 				onInputChange={handleInputChange}
 				onChange={handleChange}

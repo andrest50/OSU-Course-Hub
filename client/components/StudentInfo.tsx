@@ -4,8 +4,8 @@ import { Card } from 'react-bootstrap';
 import { Student, CommentType } from '../utils/types';
 
 interface Props {
-	student: Student;
 	comments: CommentType[];
+	student: Student;
 }
 
 const StudentInfo: React.FC<Props> = props => {

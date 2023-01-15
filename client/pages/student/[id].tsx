@@ -4,7 +4,7 @@ import Error from 'next/error';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Container } from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ReactElement } from 'react';
 import Header from '../../components/Header';
 import StudentInfo from '../../components/StudentInfo';
 import { STUDENT } from '../../graphql/queries/student';
@@ -12,7 +12,7 @@ import { STUDENT_COMMENTS } from '../../graphql/queries/comment';
 import { StudentType, CommentData } from '../../utils/types';
 import Comment from '../../components/Comment';
 
-const StudentPage = () => {
+const StudentPage = (): ReactElement => {
 	const router = useRouter();
 	const { loading, data } = useQuery<StudentType>(STUDENT, {
 		variables: {
@@ -21,12 +21,12 @@ const StudentPage = () => {
 		skip: !router.query.id,
 	});
 
-	const { loading: loading_comments, data: data_comments } = useQuery<CommentData>(
+	const { loading: loadingComments, data: dataComments } = useQuery<CommentData>(
 		STUDENT_COMMENTS,
 		{
 			variables: { ONID: router.query.id },
-			skip: !router.query.id
-		},
+			skip: !router.query.id,
+		}
 	);
 
 	const [student, setStudent] = useState<any>();
@@ -36,16 +36,16 @@ const StudentPage = () => {
 		if (data) {
 			setStudent(data.student);
 		}
-		if (data_comments) {
-			setComments(data_comments.comments);
+		if (dataComments) {
+			setComments(dataComments.comments);
 		}
-	}, [data, data_comments]);
+	}, [data, dataComments]);
 
 	const deleteOneComment = (commentID: number) => {
 		setComments(comments.filter(comment => commentID != parseInt(comment['id'])));
 	};
 
-	if (loading || loading_comments || !router.query.id) {
+	if (loading || loadingComments || !router.query.id) {
 		return <></>;
 	} else if (!data) {
 		return <Error statusCode={404} />;
@@ -60,15 +60,13 @@ const StudentPage = () => {
 			<Header searchbarToggled={true} />
 			<Container>
 				<StudentInfo student={student} comments={comments} />
-				{comments
-					.slice()
-					.map(comment => (
-						<Comment
-							key={comment.id}
-							comment={comment}
-							deleteOneComment={deleteOneComment}
-						/>
-					))}
+				{comments.slice().map(comment => (
+					<Comment
+						key={comment.id}
+						comment={comment}
+						deleteOneComment={deleteOneComment}
+					/>
+				))}
 			</Container>
 		</>
 	);

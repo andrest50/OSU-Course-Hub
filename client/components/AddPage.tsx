@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/client';
-import { CREATE_COURSE, ADD_PROFESSOR_TO_COURSE } from 'graphql/mutations/course';
-import { CREATE_PROFESSOR } from 'graphql/mutations/professor';
-import { PROFESSORS } from 'graphql/queries/professor';
+import { CREATE_COURSE, ADD_PROFESSOR_TO_COURSE } from '../graphql/mutations/course';
+import CREATE_PROFESSOR from '../graphql/mutations/professor';
+import { PROFESSORS } from '../graphql/queries/professor';
 import { Colleges, Departments } from '../utils/util';
 import { ProfessorData } from '../utils/types';
 import { useRouter } from 'next/router';
 
-export default function AddCourseOrProfessor() {
+export default function AddCourseOrProfessor(): ReactElement {
 	const router = useRouter();
 	const [values, setValues] = useState({
 		type: 'course',
@@ -27,17 +27,17 @@ export default function AddCourseOrProfessor() {
 	const [setCourse] = useMutation(CREATE_COURSE);
 	const [setCourseProfessor] = useMutation(ADD_PROFESSOR_TO_COURSE);
 
-	const handleClose = () => { 
-		console.debug("Add page close modal")
+	const handleClose = () => {
+		console.debug('Add page close modal');
 		setShow(false);
 	};
-	const handleShow = () => { 
-		console.debug("Add page show modal");
+	const handleShow = () => {
+		console.debug('Add page show modal');
 		setShow(true);
-	}
+	};
 
 	const handleChange = (e: any) => {
-		console.debug("Add page form change: ", e, e.target.name, e.target.value);
+		console.debug('Add page form change: ', e, e.target.name, e.target.value);
 		setValues({ ...values, [e.target.name]: e.target.value });
 	};
 
@@ -45,21 +45,22 @@ export default function AddCourseOrProfessor() {
 		e.preventDefault();
 		if (values.type == 'course') {
 			setCourse({ variables: { department: values.department, number: values.number } })
-				.then((resp) => {
-					console.debug("Course created: ", resp);
+				.then(resp => {
+					console.debug('Course created: ', resp);
 					console.log(values.professorId);
-					setCourseProfessor({ variables: {
-						professorID: parseFloat(values.professorId),
-						courseID: parseFloat(resp.data.createCourse.id),
-						termTaught: 'Winter',
-						yearTaught: 2023,
-					} })
-						.then((res) => {
-							console.debug("Course professor added: ", res)
-							router.push(`/course/${resp.data.createCourse.id}`)
-						})
+					setCourseProfessor({
+						variables: {
+							professorID: parseFloat(values.professorId),
+							courseID: parseFloat(resp.data.createCourse.id),
+							termTaught: 'Winter',
+							yearTaught: 2023,
+						},
+					}).then(res => {
+						console.debug('Course professor added: ', res);
+						router.push(`/course/${resp.data.createCourse.id}`);
+					});
 				})
-				.catch((err) => console.log('Failed to create course with error: ', err));
+				.catch(err => console.log('Failed to create course with error: ', err));
 		} else if (values.type == 'professor') {
 			setProfessor({
 				variables: {
@@ -67,18 +68,17 @@ export default function AddCourseOrProfessor() {
 					lastName: values.lastname,
 					college: values.college,
 				},
-			})
-				.then((resp) => {
-					console.debug("Professor created: ", resp);
-					router.push(`/professor/${resp.data.createProfessor.id}`);
-				});
+			}).then(resp => {
+				console.debug('Professor created: ', resp);
+				router.push(`/professor/${resp.data.createProfessor.id}`);
+			});
 		} else {
 			alert('Invalid type error from AddProfessor.tsx');
 		}
 	};
 
 	if (loading) {
-		return <></>
+		return <></>;
 	}
 
 	return (

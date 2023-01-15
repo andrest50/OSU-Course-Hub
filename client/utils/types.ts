@@ -7,10 +7,10 @@ export interface CourseData {
 }
 
 export interface Course {
-	id: string;
-	department: string;
-	number: number;
 	comments: CommentType[];
+	department: string;
+	id: string;
+	number: number;
 }
 
 export interface ProfessorType {
@@ -22,11 +22,11 @@ export interface ProfessorData {
 }
 
 export interface Professor {
-	id: string;
-	firstName: string;
-	lastName: string;
 	college: string;
 	comments: CommentType[];
+	firstName: string;
+	id: string;
+	lastName: string;
 }
 
 export interface RecentCommentData {
@@ -38,22 +38,22 @@ export interface CommentData {
 }
 
 export interface CommentType {
-	id: string;
-	anonymous?: boolean;
-	text: string;
-	difficulty: number;
-	quality: number;
 	ONID: string;
-	courseID?: number;
-	professorID?: number;
-	campus?: string;
-	recommend?: boolean;
+	anonymous?: boolean;
 	baccCore?: boolean;
-	gradeReceived?: string;
-	tags: string[];
+	campus?: string;
+	courseID?: number;
 	createdAt: Date;
-	likes: number;
+	difficulty: number;
 	dislikes: number;
+	gradeReceived?: string;
+	id: string;
+	likes: number;
+	professorID?: number;
+	quality: number;
+	recommend?: boolean;
+	tags: string[];
+	text: string;
 }
 
 export interface StudentType {
@@ -66,6 +66,6 @@ export interface StudentData {
 
 export interface Student {
 	ONID: string;
-	likedCommentIDs: number[];
 	dislikedCommentIDs: number[];
+	likedCommentIDs: number[];
 }

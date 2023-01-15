@@ -1,9 +1,9 @@
-export const Auth = () => {
+const Auth = (): void => {
 	const PUBLIC_KEY = 0;
 	const endpoint = 'https://courses.ecampus.oregonstate.edu/services/auth/public/v1/token';
 	const originalQuery = '';
 	const params = {
-		public_key: PUBLIC_KEY,
+		publicKey: PUBLIC_KEY,
 		query: originalQuery,
 		redirect: window.location.href,
 	} as any;
@@ -12,3 +12,5 @@ export const Auth = () => {
 		.join('&');
 	window.location.assign(endpoint + '?' + query);
 };
+
+export default Auth;

@@ -23,7 +23,7 @@ interface Props {
 }
 
 const Tags: React.FC<Props> = ({ comments }) => {
-	let tagSet: Set<string> = new Set();
+	const tagSet: Set<string> = new Set();
 	comments.forEach(comment => comment.tags.forEach(tag => tagSet.add(tag)));
 	let tags: string[] = [];
 	tags = [...tagSet];

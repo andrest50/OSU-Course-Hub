@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const COURSE_TEXTBOOKS = gql`
+const COURSE_TEXTBOOKS = gql`
 	query courseTextbooks($courseID: Float!) {
 		textbooks: courseTextbooks(courseID: $courseID) {
 			ISBN
@@ -14,3 +14,5 @@ export const COURSE_TEXTBOOKS = gql`
 		}
 	}
 `;
+
+export default COURSE_TEXTBOOKS;
